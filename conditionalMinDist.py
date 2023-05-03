@@ -1,5 +1,34 @@
 import stormpy, math
 import gc
+import random
+import stormpy.simulator
+
+def simulateModel(model,scheduler=None):
+	simulator = stormpy.simulator.create_simulator(model)
+	paths = []
+	for m in range(1):
+		path = []
+		state, reward, labels = simulator.restart()
+		path = [f"{state}"]
+		pathlength = 0
+		while labels == set() or labels == {"init"}:
+			actions = simulator.available_actions()
+			select_action = random.randint(0,len(actions)-1)
+			if scheduler is None:
+				path.append(f"--act={actions[select_action]}-->")
+			else:
+				# print(scheduler)
+				path.append(f"--act={scheduler.get_choice(state,0)}-->")
+			state, reward, labels = simulator.step(actions[select_action])
+			pathlength += 1
+			path.append(f"{state}")
+			if simulator.is_done():
+				break
+		print("Path length:",pathlength)
+		paths.append(path)
+	# for path in paths:
+	# 	print(" ".join(path))
+	# 	print("------")
 
 def investigateModel(model):
 	for state in model.states:
@@ -60,6 +89,7 @@ class ConditionalMinDistEngine():
 			builder.new_row_group(numChoices) # add state; create a new group of rows
 
 			bestActions = self.getBestActionIds(state)
+			# print("State",state,"has best actions",bestActions)
 
 			# each row is for a choice: (state, action) pair
 			for action in state.actions:
@@ -163,6 +193,7 @@ class ConditionalMinDistEngine():
 		newModel = stormpy.storage.SparseMdp(components)
 		self.newModelConditional = newModel
 		# investigateModel(newModel)
+		print("New model simulation:")
 		return (newModel)
 
 	def getBestDistValue(self,formula): # get the expected min distance for each states
@@ -171,6 +202,9 @@ class ConditionalMinDistEngine():
 		# result using our approach
 		properties = stormpy.parse_properties(formula, self.prismProgram)
 		newResult = stormpy.model_checking(self.newModel, properties[0], extract_scheduler=True)
+		scheduler = newResult.scheduler
+		dtmc = self.newModel.apply_scheduler(scheduler)
+		# simulateModel(dtmc,scheduler)
 		# print(newResult.scheduler)
 		self.newResult = newResult
 		return newResult
@@ -179,6 +213,7 @@ class ConditionalMinDistEngine():
 		# get the expected min distance for each states in the MC created by storm
 		scheduler = self.result.scheduler
 		dtmc = self.newModelConditional.apply_scheduler(scheduler)
+		# simulateModel(dtmc,scheduler)
 		properties = stormpy.parse_properties(formula, self.prismProgram)
 		newStormResult = stormpy.model_checking(dtmc, properties[0], extract_scheduler=True)
 		# print(newResult.scheduler)
@@ -220,10 +255,11 @@ class ConditionalMinDistEngine():
 	def getFinalValues(self): # returns probability to reach in original MDP and distance value in new MDP
 		oldInitialState = self.model.initial_states[0]
 		newInitialState = self.newModel.initial_states[0]
+		newStormInitialState = self.newModelConditional.initial_states[0]
 		# print(oldInitialState,newInitialState)
 		value = self.result.at(oldInitialState)
 		distance = self.newResult.at(newInitialState)
-		distanceStorm = self.newStormResult.at(newInitialState)
+		distanceStorm = self.newStormResult.at(newStormInitialState)
 		return value, distance, distanceStorm
 
 def getDistValue(prismFile,formula1,formula2):

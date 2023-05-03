@@ -38,7 +38,7 @@ def createPrismFilefFromGrids(walls,holes,targets,position,initAction):
 	initAction = 3 --> North
 	initAction = 4 --> South
 	"""
-	print('global initStep : bool init true;', file = f)
+	# print('global initStep : bool init true;', file = f)
 	"""
 	initStep is true only on the first step and in this step only allowed actions are according to the value of initAction
 	"""
@@ -95,10 +95,10 @@ def createPrismFilefFromGrids(walls,holes,targets,position,initAction):
 	print(f'x : [0..{height-1}] init {position[0]};', file = f)
 	print(f'y : [0..{width-1}] init {position[1]};\n', file = f)
 
-	print("[North] (north & !win & !loss & !end) -> (10 * northInt)/(numDirNorth+9): (x'=x-1) & (initStep' = false) + (1 * eastInt)/(numDirNorth+9): (y'=y+1) & (initStep' = false) + (1 * westInt)/(numDirNorth+9): (y'=y-1);", file = f)
-	print("[South] (south  & !win & !loss & !end) -> (10 * southInt)/(numDirSouth+9): (x'=x+1) & (initStep' = false) + (1 * eastInt)/(numDirSouth+9): (y'=y+1) & (initStep' = false) + (1 * westInt)/(numDirSouth+9): (y'=y-1);", file = f)
-	print("[East] (east  & !win & !loss & !end) -> (1 * northInt)/(numDirEast+9): (x'=x-1) & (initStep' = false) + (1 * southInt)/(numDirEast+9): (x'=x+1) & (initStep' = false) + (10 * eastInt)/(numDirEast+9): (y'=y+1);", file = f)
-	print("[West] (west & !win & !loss & !end) -> (1 * northInt)/(numDirWest+9): (x'=x-1) & (initStep' = false) + (1 * southInt)/(numDirWest+9): (x'=x+1) & (initStep' = false) + (10 * westInt)/(numDirWest+9): (y'=y-1);", file = f)
+	print("[North] (north & !win & !loss & !end) -> (10 * northInt)/(numDirNorth+9): (x'=x-1) + (1 * eastInt)/(numDirNorth+9): (y'=y+1) + (1 * westInt)/(numDirNorth+9): (y'=y-1);", file = f)
+	print("[South] (south  & !win & !loss & !end) -> (10 * southInt)/(numDirSouth+9): (x'=x+1)  + (1 * eastInt)/(numDirSouth+9): (y'=y+1) + (1 * westInt)/(numDirSouth+9): (y'=y-1);", file = f)
+	print("[East] (east  & !win & !loss & !end) -> (1 * northInt)/(numDirEast+9): (x'=x-1)  + (1 * southInt)/(numDirEast+9): (x'=x+1) + (10 * eastInt)/(numDirEast+9): (y'=y+1);", file = f)
+	print("[West] (west & !win & !loss & !end) -> (1 * northInt)/(numDirWest+9): (x'=x-1) + (1 * southInt)/(numDirWest+9): (x'=x+1) + (10 * westInt)/(numDirWest+9): (y'=y-1);", file = f)
 	print ("[] (win | loss) -> 1 : (end' = true);", file = f)
 	print('\nendmodule\n', file = f)
 

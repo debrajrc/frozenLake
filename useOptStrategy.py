@@ -53,7 +53,7 @@ def main():
 		prismFile = createPrismFile(layout)
 		formula_str1 = "Pmax=? [F win]"
 		formula_str2 = 'Tmin=? [F win]'
-		formula_str3 = "Tmax=? [F win]"
+		# formula_str3 = "Tmax=? [F win]"
 		v = getDistValue(prismFile,formula_str1,formula_str2)
 		# v2 = getDistValue(prismFile,formula_str1,formula_str2)
 		# print("Storm",v1)
