@@ -1,8 +1,1 @@
-# Frozen Lake
-
-## TODO
-
-- Layout --> PRISM -- done
-- Use Storm to get optimal strategy
-- Use our algorithm to get optimal strategy
-
+Paper: https://arxiv.org/abs/2305.09634
